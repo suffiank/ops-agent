@@ -31,13 +31,18 @@ processors:
     metrics:
       exclude:
         match_type: regexp
-        metric_names: []
+        metric_names:
+<<<<<<< HEAD
+        - "^agent\\.googleapis\\.com/.*$$"
+=======
+        - ^.*$
   filter/fluentbit_0:
     metrics:
       include:
         match_type: strict
         metric_names:
         - fluentbit_uptime
+>>>>>>> 8551d5b (Ran command to adjust all golden references for the tests.)
   metricstransform/agent_1:
     transforms:
     - action: update
@@ -368,13 +373,6 @@ processors:
       include: ^(.*)$$
       match_type: regexp
       new_name: agent.googleapis.com/$${1}
-  metricstransform/nginxpipeline_nginxmetrics_1:
-    transforms:
-    - action: update
-      include: ^(.*)$$
-      match_type: regexp
-      new_name: workload.googleapis.com/$${1}
-  normalizesums/nginxpipeline_nginxmetrics_0: {}
   resourcedetection/_global_0:
     detectors:
     - gce
@@ -391,9 +389,6 @@ receivers:
       paging: {}
       process: {}
       processes: {}
-  nginx/nginxpipeline_nginxmetrics:
-    collection_interval: 30s
-    endpoint: http://localhost/status
   prometheus/agent:
     config:
       scrape_configs:
@@ -442,12 +437,3 @@ service:
       - resourcedetection/_global_0
       receivers:
       - prometheus/fluentbit
-    metrics/nginxpipeline_nginxmetrics:
-      exporters:
-      - googlecloud
-      processors:
-      - normalizesums/nginxpipeline_nginxmetrics_0
-      - metricstransform/nginxpipeline_nginxmetrics_1
-      - resourcedetection/_global_0
-      receivers:
-      - nginx/nginxpipeline_nginxmetrics
