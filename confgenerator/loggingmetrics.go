@@ -48,11 +48,6 @@ func (r MetricsReceiverLogging) Pipeline() otel.Pipeline {
 				"fluentbit_uptime",
 				"fluentbit_output_proc_records_total",
 			),
-			otel.MetricsFilter(
-				"include",
-				"strict",
-				"fluentbit_output_proc_records_total",
-			),
 			otel.MetricsTransform(
 				otel.RenameMetric("fluentbit_uptime", "agent/uptime",
 					// change data type from double -> int64
