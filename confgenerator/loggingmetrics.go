@@ -46,6 +46,7 @@ func (r MetricsReceiverLogging) Pipeline() otel.Pipeline {
 				"include",
 				"strict",
 				"fluentbit_uptime",
+				"fluentbit_output_proc_records_total",
 			),
 			otel.MetricsFilter(
 				"include",
@@ -67,7 +68,6 @@ func (r MetricsReceiverLogging) Pipeline() otel.Pipeline {
 					// change data type from double -> int64
 					otel.ToggleScalarDataType,
 				),
-				otel.AddPrefix("agent.googleapis.com"),
 			),
 		},
 	}
