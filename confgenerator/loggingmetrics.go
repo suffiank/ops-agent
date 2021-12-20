@@ -47,6 +47,7 @@ func (r MetricsReceiverLogging) Pipeline() otel.Pipeline {
 				"strict",
 				"fluentbit_uptime",
 				"fluentbit_output_proc_records_total",
+				"fluentbit_output_retried_records_total",
 			),
 			otel.MetricsTransform(
 				otel.RenameMetric("fluentbit_uptime", "agent/uptime",
@@ -62,6 +63,14 @@ func (r MetricsReceiverLogging) Pipeline() otel.Pipeline {
 				otel.RenameMetric("fluentbit_output_proc_records_total", "agent/log_entry_count",
 					// change data type from double -> int64
 					otel.ToggleScalarDataType,
+					otel.AddLabel("version", r.Version),
+				),
+			),
+			otel.MetricsTransform(
+				otel.RenameMetric("fluentbit_output_retried_records_total", "agent/log_entry_retry_count",
+					// change data type from double -> int64
+					otel.ToggleScalarDataType,
+					otel.AddLabel("version", r.Version),
 				),
 			),
 		},
