@@ -214,6 +214,7 @@ func getVersionLabel(prefix string) (string, error) {
 }
 
 func getUserAgent(prefix string, hostInfo *host.InfoStat) (string, error) {
+	fmt.Println(hostInfo.hostname)
 	extraParams := map[string]string{
 		"Platform":     hostInfo.OS,
 		"ShortName":    hostInfo.Platform,
