@@ -185,6 +185,7 @@ func (l *Logging) generateFluentbitComponents(userAgent string, hostInfo *host.I
 
 	out = append(out, stackdriverOutputComponent("ops-agent-fluent-bit", userAgent))
 	out = append(out, prometheusExporterOutputComponent())
+	out = append(out, setInstanceNameComponent(hostInfo.Hostname))
 
 	return out, nil
 }
@@ -214,7 +215,6 @@ func getVersionLabel(prefix string) (string, error) {
 }
 
 func getUserAgent(prefix string, hostInfo *host.InfoStat) (string, error) {
-	log.Println("Hostname :", hostInfo.Hostname)
 	extraParams := map[string]string{
 		"Platform":     hostInfo.OS,
 		"ShortName":    hostInfo.Platform,

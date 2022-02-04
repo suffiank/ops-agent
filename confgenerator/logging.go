@@ -34,6 +34,18 @@ func setLogNameComponents(tag, logName string) []fluentbit.Component {
 	}
 }
 
+// setInstanceNameComponent
+func setInstanceNameComponent(Hostname string) fluentbit.Component {
+	return fluentbit.Component{
+		Kind: "FILTER",
+		Config: map[string]string{
+			"Match": "*",
+			"Add":   fmt.Sprintf("logging.googleapis.com/resource/labels/instance_name SAMPLEHOSTNAME:%s", Hostname),
+			"Name":  "modify",
+		},
+	}
+}
+
 // stackdriverOutputComponent generates a component that outputs logs matching the regex `match` using `userAgent`.
 func stackdriverOutputComponent(match, userAgent string) fluentbit.Component {
 	return fluentbit.Component{
