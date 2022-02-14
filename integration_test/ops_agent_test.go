@@ -283,6 +283,7 @@ func TestCustomLogFormat(t *testing.T) {
 		}
 
 		line := fmt.Sprintf("<13>1 %s %s my_app_id - - - qqqqrrrr\n", time.Now().Format(time.RFC3339Nano), vm.Name)
+		fmt.Println(line)
 		if err := gce.UploadContent(ctx, logger, vm, strings.NewReader(line), logPath); err != nil {
 			t.Fatalf("error writing dummy log line: %v", err)
 		}
