@@ -40,7 +40,7 @@ func setInstanceNameComponent(Hostname string) fluentbit.Component {
 		Kind: "FILTER",
 		Config: map[string]string{
 			"Match": "*",
-			"Add":   fmt.Sprintf("compute.googleapis.com/resource_name %s", Hostname),
+			"Add":   fmt.Sprintf("logging.googleapis.com/labels {\"instance_name\":\"%s\"}", Hostname),
 			"Name":  "modify",
 		},
 	}
