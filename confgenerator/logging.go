@@ -34,13 +34,27 @@ func setLogNameComponents(tag, logName string) []fluentbit.Component {
 	}
 }
 
+// setInstanceNameNestingComponent
+func setInstanceNameNestingComponent() fluentbit.Component {
+	return fluentbit.Component{
+		Kind: "FILTER",
+		Config: map[string]string{
+			"Match":     "*",
+			"Operation": "nest",
+			"Wildcard":  "instance_name*",
+			"Nest_under": "logging.googleapis.com/labels",
+			"Name":       "nest",
+		},
+	}
+}
+
 // setInstanceNameComponent
 func setInstanceNameComponent(Hostname string) fluentbit.Component {
 	return fluentbit.Component{
 		Kind: "FILTER",
 		Config: map[string]string{
 			"Match": "*",
-			"Add":   fmt.Sprintf("logging.googleapis.com/labels {\"instance_name\":\"%s\"}", Hostname),
+			"Add":   fmt.Sprintf("instance_name %s", Hostname),
 			"Name":  "modify",
 		},
 	}
