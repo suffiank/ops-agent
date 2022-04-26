@@ -191,13 +191,13 @@ func updateOrCompareGolden(t *testing.T, testName, goos, dir, name, got, want st
 // If at any point, an error is generated, immediately return it for validation.
 func generateConfigs(testName, userSpecifiedConfPath string, builtInConfStructs map[string]*confgenerator.UnifiedConfig, platform platformConfig) (got map[string]string, err error) {
 	got = make(map[string]string)
-	builtInConfBytes, mergedConfBytes, err := confgenerator.MergeConfFiles(userSpecifiedConfPath, platform.OS, apps.BuiltInConfStructs)
+	uc, err := confgenerator.MergeConfFiles(userSpecifiedConfPath, platform.OS, apps.BuiltInConfStructs)
 	if err != nil {
 		got["error"] = err.Error()
 		return
 	}
 
-	uc, err := confgenerator.ParseUnifiedConfigAndValidate(mergedConfBytes, platform.OS)
+	err = uc.Validate(platform.OS)
 	if err != nil {
 		got["error"] = err.Error()
 		return
@@ -222,7 +222,7 @@ func generateConfigs(testName, userSpecifiedConfPath string, builtInConfStructs 
 
 	// Test that the built-in config file is as expected.
 	if testName == builtInConfTestName {
-		got["built-in-config.yaml"] = string(builtInConfBytes)
+		got["built-in-config.yaml"] = apps.BuiltInConfStructs[platform.OS].String()
 	}
 
 	return
