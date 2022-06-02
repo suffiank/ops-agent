@@ -15,6 +15,7 @@
 package confgenerator_test
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -101,13 +102,20 @@ func testGenerateConfsPlatform(t *testing.T, dir string, platform platformConfig
 	}
 	for _, d := range dirs {
 		testName := d.Name()
+		confDebugFolder := filepath.Join(dirPath, testName)
+		userSpecifiedConfPath := filepath.Join(confDebugFolder, "/input.yaml")
+
+		if _, err := os.Stat(userSpecifiedConfPath + ".missing"); err == nil {
+			// Intentionally missing
+		} else if _, err := os.Stat(userSpecifiedConfPath); errors.Is(err, os.ErrNotExist) {
+			// Empty directory; probably a leftover with backup files.
+			continue
+		}
+
 		t.Run(testName, func(t *testing.T) {
 			t.Parallel()
 			// Retrieve the expected golden conf files.
 			expectedFiles := readFileContents(t, testName, platform.OS, dir)
-
-			confDebugFolder := filepath.Join(dirPath, testName)
-			userSpecifiedConfPath := filepath.Join(confDebugFolder, "/input.yaml")
 
 			// Generate the actual conf files.
 			got, err := generateConfigs(testName, userSpecifiedConfPath, apps.BuiltInConfStructs, platform)
