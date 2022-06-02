@@ -148,7 +148,7 @@ func (r LoggingReceiverFilesMixin) Components(tag string) []fluentbit.Component 
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverFiles{} })
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverFiles{} })
 }
 
 // A LoggingReceiverSyslog represents the configuration for a syslog protocol receiver.
@@ -198,7 +198,7 @@ func (r LoggingReceiverSyslog) Components(tag string) []fluentbit.Component {
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverSyslog{} })
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverSyslog{} })
 }
 
 // A LoggingReceiverTCP represents the configuration for a TCP receiver.
@@ -246,7 +246,7 @@ func (r LoggingReceiverTCP) Components(tag string) []fluentbit.Component {
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverTCP{} })
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverTCP{} })
 }
 
 // A LoggingReceiverFluentForward represents the configuration for a Forward Protocol receiver.
@@ -292,7 +292,7 @@ func (r LoggingReceiverFluentForward) Components(tag string) []fluentbit.Compone
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverFluentForward{} })
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverFluentForward{} })
 }
 
 // A LoggingReceiverWindowsEventLog represents the user configuration for a Windows event log receiver.
@@ -351,7 +351,7 @@ func (r LoggingReceiverWindowsEventLog) Components(tag string) []fluentbit.Compo
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverWindowsEventLog{} }, "windows")
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverWindowsEventLog{} }, "windows")
 }
 
 // A LoggingReceiverSystemd represents the user configuration for a Systemd/journald receiver.
@@ -427,5 +427,5 @@ func (r LoggingReceiverSystemd) Components(tag string) []fluentbit.Component {
 }
 
 func init() {
-	LoggingReceiverTypes.RegisterType(func() Component { return &LoggingReceiverSystemd{} }, "linux")
+	LoggingReceiverTypes.RegisterType(func() LoggingReceiver { return &LoggingReceiverSystemd{} }, "linux")
 }

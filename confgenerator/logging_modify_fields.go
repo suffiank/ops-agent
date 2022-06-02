@@ -217,5 +217,5 @@ end
 }
 
 func init() {
-	LoggingProcessorTypes.RegisterType(func() Component { return &LoggingProcessorModifyFields{} })
+	LoggingProcessorTypes.RegisterType(func() LoggingProcessor { return &LoggingProcessorModifyFields{} })
 }
