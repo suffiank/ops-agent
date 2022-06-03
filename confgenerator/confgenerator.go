@@ -40,7 +40,7 @@ func (uc *UnifiedConfig) GenerateOtelConfig(hostInfo *host.InfoStat) (string, er
 	pipelines := make(map[string]otel.Pipeline)
 	if uc.Metrics != nil {
 		var err error
-		pipelines, err = uc.Metrics.generateOtelPipelines()
+		pipelines, err = uc.generateOtelPipelines()
 		if err != nil {
 			return "", err
 		}
@@ -100,11 +100,16 @@ func (uc *UnifiedConfig) GenerateOtelConfig(hostInfo *host.InfoStat) (string, er
 	return otelConfig, nil
 }
 
-func (m *Metrics) generateOtelPipelines() (map[string]otel.Pipeline, error) {
+func (uc *UnifiedConfig) generateOtelPipelines() (map[string]otel.Pipeline, error) {
+	m := uc.Metrics
+	receivers, err := uc.MetricsReceivers()
+	if err != nil {
+		return nil, err
+	}
 	out := make(map[string]otel.Pipeline)
 	for pID, p := range m.Service.Pipelines {
 		for _, rID := range p.ReceiverIDs {
-			receiver, ok := m.Receivers[rID]
+			receiver, ok := receivers[rID]
 			if !ok {
 				return nil, fmt.Errorf("receiver %q not found", rID)
 			}
