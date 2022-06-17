@@ -7,4 +7,4 @@
 [submodule "submodules/opentelemetry-operations-collector"]
 	path = submodules/opentelemetry-operations-collector
 	url = ../../suffiank/opentelemetry-operations-collector.git
-   branch = sufkha/dcgmreceiver
+   branch = sukha/dcgmreceiver
