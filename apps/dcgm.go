@@ -15,7 +15,6 @@
 package apps
 
 import (
-   "fmt"
 	"github.com/GoogleCloudPlatform/ops-agent/confgenerator"
 	"github.com/GoogleCloudPlatform/ops-agent/confgenerator/otel"
 )
@@ -23,18 +22,76 @@ import (
 type MetricsReceiverDcgm struct {
 	confgenerator.ConfigComponent `yaml:",inline"`
 	confgenerator.MetricsReceiverShared `yaml:",inline"`
+
+	Endpoint string `yaml:"endpoint" validate:"omitempty"`
+   ProfilingMetrics bool `yaml:"profiling_metrics"`
 }
+
+const defaultDcgmEndpoint = "localhost:5555"
 
 func (r MetricsReceiverDcgm) Type() string {
 	return "dcgm"
 }
 
 func (r MetricsReceiverDcgm) Pipelines() []otel.Pipeline {
+   if r.Endpoint == "" {
+      r.Endpoint = defaultDcgmEndpoint
+   }
+
+   metrics := map[string]interface{}{
+     "dcgm.gpu.utilization": map[string]bool {
+        "enabled": true,
+     },
+     "dcgm.gpu.memory.bytes_used": map[string]bool {
+        "enabled": true,
+     },
+   }
+
+   if r.ProfilingMetrics {
+      metrics = map[string]interface{}{
+         "dcgm.gpu.profiling.sm_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.sm_occupancy": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.tensor_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.fp64_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.fp32_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.fp16_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.dram_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.pcie_sent_bytes": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.pcie_received_bytes": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.nvlink_sent_bytes": map[string]bool {
+            "enabled": true,
+         },
+         "dcgm.gpu.profiling.nvlink_received_bytes": map[string]bool {
+            "enabled": true,
+         },
+      }
+   }
+
 	return []otel.Pipeline{{
 		Receiver: otel.Component{
 			Type: "dcgm",
 			Config: map[string]interface{}{
 				"collection_interval": r.CollectionIntervalString(),
+            "endpoint": r.Endpoint,
+            "metrics": metrics,
 			},
 		},
 		Processors: []otel.Component{
@@ -47,7 +104,6 @@ func (r MetricsReceiverDcgm) Pipelines() []otel.Pipeline {
 }
 
 func init() {
-   fmt.Printf("Registering DCGM receiver\n")
 	confgenerator.MetricsReceiverTypes.RegisterType(func() confgenerator.Component { return &MetricsReceiverDcgm{} })
 }
 
