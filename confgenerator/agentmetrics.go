@@ -25,7 +25,7 @@ import (
 // Therefore, it does not need to implement any interfaces.
 type AgentSelfMetrics struct {
 	Version string
-	Port    int
+	Port    uint16
 }
 
 func (r AgentSelfMetrics) MetricsSubmodulePipeline() otel.Pipeline {

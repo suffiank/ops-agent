@@ -18,11 +18,13 @@ package otel
 import (
 	"fmt"
 
+	"github.com/GoogleCloudPlatform/ops-agent/internal/port"
 	yaml "github.com/goccy/go-yaml"
 	"github.com/mitchellh/mapstructure"
 )
 
-const MetricsPort = 20201
+const DefaultMetricsPort = 20201
+const MetricsPortKey = "otel-metrics-port"
 
 // Pipeline represents a single OT receiver and zero or more processors that must be chained after that receiver.
 type Pipeline struct {
@@ -82,7 +84,7 @@ func (c ModularConfig) Generate() (string, error) {
 		"pipelines": pipelines,
 		"telemetry": {
 			"metrics": map[string]interface{}{
-				"address": fmt.Sprintf("0.0.0.0:%d", MetricsPort),
+				"address": fmt.Sprintf("0.0.0.0:%d", MetricsPort()),
 			},
 		},
 	}
@@ -132,4 +134,23 @@ func (c ModularConfig) Generate() (string, error) {
 		return "", err
 	}
 	return string(out), nil
+}
+
+func MetricsPort() uint16 {
+	var metricsPort uint16 = DefaultMetricsPort
+	config, err := port.ReadConfig(port.DefaultConfigPath)
+	if err == nil && config != nil {
+		if reservedPort, ok := config.ReservedPorts[MetricsPortKey]; ok {
+			metricsPort = reservedPort
+		} else {
+			chooser, err := port.NewRandomPortChooser()
+			if err == nil {
+				randomPort, err := chooser.Choose()
+				if err == nil {
+					metricsPort = randomPort
+				}
+			}
+		}
+	}
+	return metricsPort
 }

@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/ops-agent
 
-go 1.17
+go 1.18
 
 require (
 	cloud.google.com/go/logging v1.4.2
@@ -8,6 +8,7 @@ require (
 	cloud.google.com/go/storage v1.18.2
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/cenkalti/backoff/v4 v4.1.2
+	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.9.0
 	github.com/goccy/go-yaml v1.9.4
 	github.com/google/go-cmp v0.5.6
@@ -52,4 +53,5 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 )

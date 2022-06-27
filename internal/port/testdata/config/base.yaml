@@ -1,0 +1,4 @@
+reserved_ports:
+  key1: 8888
+  key2: 20203
+  key3: 30405

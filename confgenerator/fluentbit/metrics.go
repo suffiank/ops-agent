@@ -14,9 +14,15 @@
 
 package fluentbit
 
-import "strconv"
+import (
+	"fmt"
 
-const MetricsPort = 20202
+	"github.com/GoogleCloudPlatform/ops-agent/internal/port"
+)
+
+const DefaultMetricsPort = 20202
+
+const MetricsPortKey = "fluent-bit-metrics"
 
 func MetricsInputComponent() Component {
 	return Component{
@@ -37,7 +43,26 @@ func MetricsOutputComponent() Component {
 			"Name":  "prometheus_exporter",
 			"Match": "*",
 			"host":  "0.0.0.0",
-			"port":  strconv.Itoa(MetricsPort),
+			"port":  fmt.Sprintf("%d", MetricsPort()),
 		},
 	}
+}
+
+func MetricsPort() uint16 {
+	var metricsPort uint16 = DefaultMetricsPort
+	config, err := port.ReadConfig(port.DefaultConfigPath)
+	if err == nil && config != nil {
+		if reservedPort, ok := config.ReservedPorts[MetricsPortKey]; ok {
+			metricsPort = reservedPort
+		} else {
+			chooser, err := port.NewRandomPortChooser()
+			if err == nil {
+				randomPort, err := chooser.Choose()
+				if err == nil {
+					metricsPort = randomPort
+				}
+			}
+		}
+	}
+	return metricsPort
 }
