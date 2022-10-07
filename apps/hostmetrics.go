@@ -15,8 +15,6 @@
 package apps
 
 import (
-	"fmt"
-
 	"github.com/GoogleCloudPlatform/ops-agent/confgenerator"
 	"github.com/GoogleCloudPlatform/ops-agent/confgenerator/otel"
 )
@@ -32,7 +30,6 @@ func (r MetricsReceiverHostmetrics) Type() string {
 }
 
 func (r MetricsReceiverHostmetrics) Pipelines() []otel.Pipeline {
-	fmt.Printf("Generating hostmetrics + nvml pipelines\n")
 	return []otel.Pipeline{
 		{
 			Receiver: otel.Component{
@@ -309,14 +306,6 @@ func (r MetricsReceiverHostmetrics) Pipelines() []otel.Pipeline {
 				Type: "nvml",
 				Config: map[string]interface{}{
 					"collection_interval": r.CollectionIntervalString(),
-					"metrics": map[string]interface{}{
-						"nvml.gpu.utilization": map[string]bool{
-							"enabled": true,
-						},
-						"nvml.gpu.memory.bytes_used": map[string]bool{
-							"enabled": true,
-						},
-					},
 				},
 			},
 			Processors: []otel.Component{
