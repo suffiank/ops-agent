@@ -23,6 +23,7 @@ type MetricsReceiverNvml struct {
 	confgenerator.ConfigComponent `yaml:",inline"`
 
 	confgenerator.MetricsReceiverShared `yaml:",inline"`
+   ProcessMetrics bool `yaml:"process_metrics"`
 }
 
 func (r MetricsReceiverNvml) Type() string {
@@ -30,11 +31,35 @@ func (r MetricsReceiverNvml) Type() string {
 }
 
 func (r MetricsReceiverNvml) Pipelines() []otel.Pipeline {
+   metrics := map[string]interface{}{
+     "nvml.gpu.utilization": map[string]bool {
+        "enabled": true,
+     },
+     "nvml.gpu.memory.bytes_used": map[string]bool {
+        "enabled": true,
+     },
+   }
+
+   if r.ProcessMetrics {
+      metrics = map[string]interface{}{
+         "nvml.gpu.processes.running_time": map[string]bool {
+            "enabled": true,
+         },
+         "nvml.gpu.processes.lifetime_gpu_utilization": map[string]bool {
+            "enabled": true,
+         },
+         "nvml.gpu.processes.lifetime_peak_bytes_used": map[string]bool {
+            "enabled": true,
+         },
+      }
+   }
+
 	return []otel.Pipeline{{
 		Receiver: otel.Component{
 			Type: "nvml",
 			Config: map[string]interface{}{
 				"collection_interval": r.CollectionIntervalString(),
+            "metrics": metrics,
 			},
 		},
 		Processors: []otel.Component{
@@ -47,6 +72,18 @@ func (r MetricsReceiverNvml) Pipelines() []otel.Pipeline {
 				otel.RenameMetric(
 					"nvml.gpu.memory.bytes_used",
 					"gpu/memory/bytes_used",
+				),
+				otel.RenameMetric(
+					"nvml.gpu.processes.running_time",
+					"nvml/gpu/processes/running_time",
+				),
+				otel.RenameMetric(
+					"nvml.gpu.processes.lifetime_gpu_utilization",
+					"nvml/gpu/processes/lifetime_gpu_utilization",
+				),
+				otel.RenameMetric(
+					"nvml.gpu.processes.lifetime_peak_bytes_used",
+					"nvml/gpu/processes/lifetime_peak_bytes_used",
 				),
 				otel.AddPrefix("workload.googleapis.com"),
 			),
