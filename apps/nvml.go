@@ -42,13 +42,10 @@ func (r MetricsReceiverNvml) Pipelines() []otel.Pipeline {
 
    if r.ProcessMetrics {
       metrics = map[string]interface{}{
-         "nvml.gpu.processes.running_time": map[string]bool {
+         "nvml.processes.lifetime_gpu_utilization": map[string]bool {
             "enabled": true,
          },
-         "nvml.gpu.processes.lifetime_gpu_utilization": map[string]bool {
-            "enabled": true,
-         },
-         "nvml.gpu.processes.lifetime_peak_bytes_used": map[string]bool {
+         "nvml.processes.lifetime_gpu_max_bytes_used": map[string]bool {
             "enabled": true,
          },
       }
@@ -74,16 +71,12 @@ func (r MetricsReceiverNvml) Pipelines() []otel.Pipeline {
 					"gpu/memory/bytes_used",
 				),
 				otel.RenameMetric(
-					"nvml.gpu.processes.running_time",
-					"nvml/gpu/processes/running_time",
+					"nvml.processes.lifetime_gpu_utilization",
+					"processes/gpu/lifetime_utilization",
 				),
 				otel.RenameMetric(
-					"nvml.gpu.processes.lifetime_gpu_utilization",
-					"nvml/gpu/processes/lifetime_gpu_utilization",
-				),
-				otel.RenameMetric(
-					"nvml.gpu.processes.lifetime_peak_bytes_used",
-					"nvml/gpu/processes/lifetime_peak_bytes_used",
+					"nvml.processes.lifetime_gpu_max_bytes_used",
+					"processes/gpu/lifetime_max_bytes_used",
 				),
 				otel.AddPrefix("workload.googleapis.com"),
 			),
